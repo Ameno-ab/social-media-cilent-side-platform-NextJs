@@ -8,7 +8,8 @@ import { toast } from "react-toastify";
 import PostList from "../../components/cards/Postlist";
 import People from "../../components/cards/people";
 import Link from "next/link";
-import {Modal} from 'antd';
+import { Modal } from "antd";
+import CommentForm from "../../components/forms/comment";
 
 const Home = () => {
   const [state, setState] = useContext(UserContext);
@@ -17,9 +18,9 @@ const Home = () => {
   const [uploading, setUploading] = useState(false);
   const [posts, setPosts] = useState("");
   const [people, setPeople] = useState([]);
-  const[comment,setComment]= useState('');
-  const [visible,setVisible]=useState(false);
-  const[currentPost,setCurrentPost]=useState('');
+  const [comment, setComment] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [currentPost, setCurrentPost] = useState("");
 
   const router = useRouter();
 
@@ -121,37 +122,49 @@ const Home = () => {
   };
   const handleLike = async (_id) => {
     // console.log("Like this post =>", _id);
-    try{
-     const {data} = await axios.put('/like-post',{_id});
-    //  console.log("liked",data);
-     newsFeed();
-    }catch(err){
+    try {
+      const { data } = await axios.put("/like-post", { _id });
+      //  console.log("liked",data);
+      newsFeed();
+    } catch (err) {
       console.log(err);
     }
   };
   const handleUnlike = async (_id) => {
     // console.log("Like this post =>", _id);
-    try{
-      const {data} = await axios.put('/unlike-post',{_id});
-    //  console.log("unliked",data);
-     newsFeed();
-     
-    }catch(err){
+    try {
+      const { data } = await axios.put("/unlike-post", { _id });
+      //  console.log("unliked",data);
+      newsFeed();
+    } catch (err) {
       console.log(err);
     }
   };
-  const handleComment=(post)=>{
+  const handleComment = (post) => {
     setCurrentPost(post);
     setVisible(true);
-  }
-  const addComment = async ()=> {
+  };
+  const addComment = async (e) => {
+    e.preventDefault();
+    // console.log("add comment to this post", currentPost._id);
+    // console.log("sace commment to db", comment);
+    try {
+      const { data } = await axios.put("/add-comment", {
+        postId: currentPost._id,
+        comment,
+      });
+      console.log("add comment", data);
+      setComment("");
+      setVisible(false);
+      newsFeed();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const removeComment = async () => {
     //
   };
-  const removeComment= async () =>
-  {
-    //
-  }
-  
+
   return (
     <UserRouter>
       <div className="container-fluid">
@@ -178,7 +191,6 @@ const Home = () => {
               handleLike={handleLike}
               handleUnlike={handleUnlike}
               handleComment={handleComment}
-
             />
           </div>
           <div className="col-md-4">
@@ -189,9 +201,18 @@ const Home = () => {
             )}
             <People people={people} handleFollow={handleFollow} />
           </div>
-       <Modal visible={visible} onCancel={()=>setVisible(false)} title="comment" footer={null}>
-         show comment form
-       </Modal>
+          <Modal
+            visible={visible}
+            onCancel={() => setVisible(false)}
+            title="comment"
+            footer={null}
+          >
+            <CommentForm
+              comment={comment}
+              setComment={setComment}
+              addComment={addComment}
+            />
+          </Modal>
         </div>
       </div>
     </UserRouter>
