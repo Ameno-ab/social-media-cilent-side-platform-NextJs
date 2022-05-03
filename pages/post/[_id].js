@@ -3,7 +3,10 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { UserRouter } from "../../components/routes/UserRoute";
 import { Toast } from "react-toastify";
-import Post from "../../components/cards/post"; 
+import Post from "../../components/cards/post";
+import { Divider } from "antd";
+import Link from "next/link";
+import { RollbackOutlined } from "@ant-design/icons";
 const PostComments = () => {
   const [post, setPost] = useState({});
   const router = useRouter();
@@ -21,6 +24,38 @@ const PostComments = () => {
       console.log(err);
     }
   };
-  return <Post post={post} />;
+  const removeComment = async (postId, comment) => {
+    // console.log(postId,comment);
+    let answer= window.confirm("Are you sure?");
+    if(!answer) return;
+    try {
+      const { data } = await axios.put("/remove-comment", {
+        postId,
+        comment,
+      });
+      console.log("comment remove",data);
+      fetchPost();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  return (
+    <div className="container-fluid">
+      <div className="row py-5 text-light bg-default-image">
+        <div className="col text-center">
+          <h1>MERN CAMP</h1>
+        </div>
+      </div>
+      <div className="container col-md-8 offset-md-2 pt-5">
+        {" "}
+        <Post post={post} commentCount={100} removeComment={removeComment} />
+      </div>
+      <Link href="/user/dashboard">
+        <a className="d-flex justify-content-center p-5">
+          <RollbackOutlined />
+        </a>
+      </Link>
+    </div>
+  );
 };
 export default PostComments;
