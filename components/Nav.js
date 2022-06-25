@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { UserContext } from "../context";
 import { Avatar  } from "antd";
-const Nav = () => {
+const  Nav = () => {
   const [current, setCurrent] = useState("");
   const router = useRouter();
   const [state, setState] = useContext(UserContext);
