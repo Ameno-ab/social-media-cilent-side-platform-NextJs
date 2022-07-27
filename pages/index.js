@@ -1,23 +1,59 @@
 import { useContext } from "react";
 import { UserContext } from "../context";
-
-const Home = () => {
-  const [state,setState]=useContext(UserContext);
-  
-
-  
+import ParallaxBG from "../components/cards/parallaxBG";
+import axios from "axios";
+import PostPublic from "../components/cards/PostPublic";
+import Head from "next/head";
+import Link from "next/link";
+const Home = ({ posts }) => {
+  const [state, setState] = useContext(UserContext);
+  const head = () => {
+    <Head>
+      <title>MERNCAMP - A social network by devs for devs</title>
+      <meta
+        name="description"
+        content="A social network by developer for other web developers"
+      />
+      <meta
+        property="og:description"
+        content="A social network by developer for other web developers"
+      />
+      <meta property="og:site_name" content="MERNCAMP" />
+      <meta property="og:url" content="http://merncamp.com" />
+      <meta
+        property="og:image:secure_url"
+        content=" http://merncamp.com/default.jpg"
+      />
+    </Head>;
+  };
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col">
-          <h1 className="display-1 text-center py-5">Home page</h1>
-                {JSON.stringify(state)};
-               
-          <img src="/images/pd.jpg" alt="" />
-          
+    <>
+      <ParallaxBG url={"/images/pd.jpg"} />
+      {/* <pre>{JSON.stringify(posts,null,4)}</pre> */}
+      <div className="container">
+        <div className="row pt-5">
+          {posts.map((post) => (
+            <div className="col-md-4">
+              <Link href={`/post/view/${post._id}`}>
+                <a>
+                  <PostPublic key={post._id} post={post} />
+                </a>
+              </Link>
+            </div>
+          ))}
         </div>
       </div>
-    </div>
+    </>
   );
 };
+
+export async function getServerSideProps() {
+  const { data } = await axios.get("/posts");
+  console.log(data);
+  return {
+    props: {
+      posts: data,
+    },
+  };
+}
 export default Home;
