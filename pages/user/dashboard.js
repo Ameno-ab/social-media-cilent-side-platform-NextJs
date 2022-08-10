@@ -11,7 +11,11 @@ import Link from "next/link";
 import { Modal, Pagination } from "antd";
 import CommentForm from "../../components/forms/comment";
 import Search from "../../components/Search";
+import io from "socket.io-client";
 
+const socket = io(process.env.NEXT_PUBLIC_SOCKETIO, {
+  reconnection: true,
+});
 const Home = () => {
   const [state, setState] = useContext(UserContext);
   const [content, setContent] = useState("");
@@ -73,6 +77,8 @@ const Home = () => {
         toast.success("post created");
         setContent("");
         setImage({});
+        //socket
+        socket.emit("new-post",data);
       }
     } catch (err) {
       console.log(err);
