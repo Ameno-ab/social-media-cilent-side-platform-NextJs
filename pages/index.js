@@ -8,7 +8,7 @@ import Link from "next/link";
 import io from "socket.io-client";
 import { parseTwoDigitYear } from "moment";
 
-const socket = io(process.env.NEXT_PUBLIC_SOCKETIO, {
+const socket = io(process.env.NEXT_PUBLIC_SOCKETIO,{path:"/socket.io"}, {
   reconnection: true,
 });
 const Home = ({ posts }) => {
